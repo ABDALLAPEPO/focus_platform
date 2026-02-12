@@ -35,7 +35,7 @@ class QuizController extends Controller
         Gate::authorize('create',[quiz::class,$video]);
         $quiz = quiz::create([
             'lesson_id' => $video->lesson_id,
-            'teacher_id' => JWTAuth::user()->id,
+            'teacher_id' => JWTAuth::user()->teacher->id,
             'video_id' => $questions['video_id'],
         ]);
         foreach ($questions['questions'] as $q) {

@@ -25,8 +25,8 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
-            'teacher'=> 'required_if:student,false|boolean',
-            'student'=>'boolean|required_if:teacher,false',
+            'teacher' => 'required_without:student|boolean|prohibited_if:student,true',
+            'student' => 'required_without:teacher|boolean|prohibited_if:teacher,true',
             'subject_id'=>'required_if:teacher,true|integer|max:255|exists:subjects,id',
             
         ];

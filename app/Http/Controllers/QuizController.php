@@ -20,8 +20,20 @@ class QuizController extends Controller
      */
     public function index()
     {
-      $teacher=JWTAuth::user()->teacher;
-        return ['quizzes'=>new quizCollection($teacher->quizzes)];
+        $teacher = JWTAuth::user()->teacher;
+        $cacheKey = 'quizzes_teacher_' . $teacher->id;
+
+        // Paginated version
+        // $quizzes = cache()->remember($cacheKey, 1440, function () use ($teacher) {
+        //     return $teacher->quizzes()->paginate(10);
+        // });
+
+        // Non-paginated version
+        $quizzes = cache()->remember($cacheKey . '_all', 1440, function () use ($teacher) {
+            return $teacher->quizzes;
+        });
+
+        return ['quizzes' => $quizzes];
     }
 
     /**
@@ -31,8 +43,8 @@ class QuizController extends Controller
     {
 
         $questions = $request->validated();
-        $video= video::find($questions['video_id']);
-        Gate::authorize('create',[quiz::class,$video]);
+        $video = video::find($questions['video_id']);
+        Gate::authorize('create', [quiz::class, $video]);
         $quiz = quiz::create([
             'lesson_id' => $video->lesson_id,
             'teacher_id' => JWTAuth::user()->teacher->id,
@@ -50,7 +62,7 @@ class QuizController extends Controller
                 'correct_answer' => $q['correct_answer'],
             ]);
         }
-        return ['quiz'=>new quizResource($quiz)];
+        return ['quiz' => new quizResource($quiz)];
     }
 
     /**
@@ -72,11 +84,32 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( video $video,quiz $quiz)
+    public function destroy(video $video, quiz $quiz)
     {
         $quiz->delete();
         return response()->json([
-            "message"=>"the quiz deleted successfully"
-        ]) ;
+            "message" => "the quiz deleted successfully"
+        ]);
+    }
+
+    /**
+     * Get all quizzes.
+     */
+    public function getAllQuizzes()
+    {
+        $quizzes = quiz::all();
+        return response()->json(['quizzes' => quizResource::collection($quizzes), 'count' => $quizzes->count()]);
+    }
+
+    /**
+     * Get a specific question for a quiz.
+     */
+    public function getQuestion(quiz $quiz, question $question)
+    {
+        if ($question->quiz_id !== $quiz->id) {
+            return response()->json(['error' => 'Question does not belong to the specified quiz'], 404);
+        }
+
+        return response()->json(['question' => new quizResource($question)]);
     }
 }

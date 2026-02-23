@@ -23,8 +23,19 @@ class AnswerController extends Controller
      */
     public function index(student $student)
     {
-        return ['quizzesAttempt'=>new quizAttemptCollection($student->quizzesAttempt)];
-        
+        $cacheKey = 'quiz_attempts_student_' . $student->id;
+
+        // Paginated version
+        // $quizAttempts = cache()->remember($cacheKey, 1440, function () use ($student) {
+        //     return $student->quizzesAttempt()->paginate(10);
+        // });
+
+        // Non-paginated version
+        $quizAttempts = cache()->remember($cacheKey . '_all', 1440, function () use ($student) {
+            return $student->quizzesAttempt;
+        });
+
+        return ['quizzesAttempt' => $quizAttempts];
     }
 
     /**

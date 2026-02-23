@@ -14,7 +14,19 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        return subject::all();
+        $cacheKey = 'subjects_all';
+
+        // Paginated version
+        // $subjects = cache()->remember($cacheKey, 1440, function () {
+        //     return subject::paginate(10);
+        // });
+
+        // Non-paginated version
+        $subjects = cache()->remember($cacheKey . '_all', 1440, function () {
+            return subject::all();
+        });
+
+        return $subjects;
     }
 
     /**
@@ -31,7 +43,6 @@ class SubjectController extends Controller
     public function show(subject $subject)
     {
         return new teacherCollection($subject->teachers);
-        
     }
     public function showSubtopics(subject $subject)
     {
@@ -40,7 +51,6 @@ class SubjectController extends Controller
             'units.lessons:id,title,unit_id',
             'units.lessons.subtopics:id,title,lesson_id'
         ]);
-       
     }
 
     /**

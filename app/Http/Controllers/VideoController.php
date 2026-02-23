@@ -18,9 +18,20 @@ class VideoController extends Controller
      */
     public function index()
     {
-        $teacher=JWTAuth::user()->teacher;
+        $teacher = JWTAuth::user()->teacher;
+        $cacheKey = 'videos_teacher_' . $teacher->id;
 
-        return ['teacher'=>(new teacherResource($teacher)),'videos'=>(new videoCollection($teacher->videos))];
+        // Paginated version
+        // $videos = cache()->remember($cacheKey, 1440, function () use ($teacher) {
+        //     return $teacher->videos()->paginate(10);
+        // });
+
+        // Non-paginated version
+        $videos = cache()->remember($cacheKey . '_all', 1440, function () use ($teacher) {
+            return $teacher->videos;
+        });
+
+        return ['teacher' => $teacher, 'videos' => $videos];
     }
 
     /**
@@ -29,7 +40,7 @@ class VideoController extends Controller
     public function store(StorevideoRequest $request)
     {
         Gate::authorize('create', video::class);
-        $teacher=JWTAuth::user()->teacher;
+        $teacher = JWTAuth::user()->teacher;
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->storeAs('videos', uniqid() . '_' . $file->getClientOriginalName(), 'public');
@@ -67,7 +78,7 @@ class VideoController extends Controller
      */
     public function destroy(video $video)
     {
-        Gate::authorize('delete',[video::class,$video]);
+        Gate::authorize('delete', [video::class, $video]);
         Storage::disk('public')->delete($video->url);
         $video->delete();
         return response()->json(['message' => 'Video deleted successfully']);

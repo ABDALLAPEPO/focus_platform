@@ -25,7 +25,19 @@ class TeacherController extends Controller
      */
     public function index(subject $subject)
     {
-        return [ 'teachers'=> new teacherCollection($subject->teachers)];
+        $cacheKey = 'teachers_subject_' . $subject->id;
+
+        // Paginated version
+        // $teachers = cache()->remember($cacheKey, 1440, function () use ($subject) {
+        //     return $subject->teachers()->paginate(10);
+        // });
+
+        // Non-paginated version
+        $teachers = cache()->remember($cacheKey . '_all', 1440, function () use ($subject) {
+            return $subject->teachers;
+        });
+
+        return ['teachers' => $teachers];
     }
 
     /**
@@ -39,29 +51,29 @@ class TeacherController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(subject $subject,teacher $teacher)
+    public function show(subject $subject, teacher $teacher)
     {
         // return (new teacherResource($teacher))->additional([ 'videos'=> new videoCollection($teacher->videos)]);
-        return ['teacher'=> new teacherResource($teacher),'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')];
+        return ['teacher' => new teacherResource($teacher), 'lessons' => $teacher->videos->load('lesson:id,title')->pluck('lesson')];
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }
-    public function showContent(subject $subject,teacher $teacher,lesson $lesson)
+    public function showContent(subject $subject, teacher $teacher, lesson $lesson)
     {
-        return ['teacher'=> new teacherResource($teacher),'videos'=> new videoCollection($teacher->videos)];
+        return ['teacher' => new teacherResource($teacher), 'videos' => new videoCollection($teacher->videos)];
         // return (new teacherResource($teacher))->additional([ 'videos'=> new videoCollection($teacher->videos)]);
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }
-    public function showQuiz(subject $subject, teacher $teacher, lesson $lesson,video $video,quiz $quiz)
+    public function showQuiz(subject $subject, teacher $teacher, lesson $lesson, video $video, quiz $quiz)
     {
         // dd($teacher->videos->quiz);
-        $student= JWTAuth::user()->student;
-// dd($student->quizzesAttempt->where('quiz_id', $quiz->id)->first());
-        if($student->quizzesAttempt->where('quiz_id',$quiz->id)->first()){
+        $student = JWTAuth::user()->student;
+        // dd($student->quizzesAttempt->where('quiz_id', $quiz->id)->first());
+        if ($student->quizzesAttempt->where('quiz_id', $quiz->id)->first()) {
             return response()->json([
-                'message'=>'you attempt this quiz ',
+                'message' => 'you attempt this quiz ',
             ]);
         };
-        return ['teacher'=> new teacherResource($teacher),'quiz'=> new quizResource($quiz)];
+        return ['teacher' => new teacherResource($teacher), 'quiz' => new quizResource($quiz)];
         // return (new teacherResource($teacher))->additional([ 'quiz'=> new quizResource($quiz)]);
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }

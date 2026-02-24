@@ -37,8 +37,28 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Indicate that the user should have the teacher role.
+     */
+    public function teacher(): static
+    {
+        return $this->afterCreating(function ($user) {
+            $user->assignRole('teacher');
+        });
+    }
+
+    /**
+     * Indicate that the user should have the student role.
+     */
+    public function student(): static
+    {
+        return $this->afterCreating(function ($user) {
+            $user->assignRole('student');
+        });
     }
 }

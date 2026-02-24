@@ -19,7 +19,7 @@ class TeacherFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::factory()->teacher(), // Assign teacher role to the user
             'subject_id' => $this->faker->randomElement(Subject::pluck('id')->toArray()),
         ];
     }

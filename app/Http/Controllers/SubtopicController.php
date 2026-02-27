@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subject;
 use App\Models\subtopic;
 use App\Http\Requests\StoresubtopicRequest;
 use App\Http\Requests\UpdatesubtopicRequest;
@@ -11,40 +12,46 @@ class SubtopicController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Subject $subject)
     {
-        //
+        return response()->json($subject->subtopics);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoresubtopicRequest $request)
+    public function store(StoresubtopicRequest $request, Subject $subject)
     {
-        //
+        $subtopic = $subject->subtopics()->create($request->validated());
+
+        return response()->json($subtopic, 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(subtopic $subtopic)
+    public function show(Subject $subject, Subtopic $subtopic)
     {
-        //
+        return response()->json($subtopic);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatesubtopicRequest $request, subtopic $subtopic)
+    public function update(UpdatesubtopicRequest $request, Subject $subject, Subtopic $subtopic)
     {
-        //
+        $subtopic->update($request->validated());
+
+        return response()->json($subtopic);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(subtopic $subtopic)
+    public function destroy(Subject $subject, Subtopic $subtopic)
     {
-        //
+        $subtopic->delete();
+
+        return response()->json(null, 204);
     }
 }

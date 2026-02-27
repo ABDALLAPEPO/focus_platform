@@ -4,6 +4,7 @@ use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\SubtopicController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
 use App\Models\subject;
@@ -35,4 +36,12 @@ Route::middleware('auth:api')->group(function () {
 
     // Video routes
     Route::apiResource('videos', VideoController::class)->middleware(['role:teacher']);
+});
+
+Route::middleware(['auth:api', 'role:teacher'])->group(function () {
+    Route::apiResource('subjects', SubjectController::class);
+
+    Route::prefix('subjects/{subject}')->group(function () {
+        Route::apiResource('subtopics', SubtopicController::class);
+    });
 });

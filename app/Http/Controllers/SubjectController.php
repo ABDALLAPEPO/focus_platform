@@ -6,6 +6,7 @@ use App\Models\subject;
 use App\Http\Requests\StoresubjectRequest;
 use App\Http\Requests\UpdatesubjectRequest;
 use App\Http\Resources\teacherCollection;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller
 {
@@ -34,7 +35,9 @@ class SubjectController extends Controller
      */
     public function store(StoresubjectRequest $request)
     {
-        //
+        $subject = Subject::create($request->validated());
+
+        return response()->json($subject, 201);
     }
 
     /**
@@ -58,7 +61,9 @@ class SubjectController extends Controller
      */
     public function update(UpdatesubjectRequest $request, subject $subject)
     {
-        //
+        $subject->update($request->validated());
+
+        return response()->json($subject);
     }
 
     /**
@@ -66,6 +71,8 @@ class SubjectController extends Controller
      */
     public function destroy(subject $subject)
     {
-        //
+        $subject->delete();
+
+        return response()->json(null, 204);
     }
 }

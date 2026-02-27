@@ -44,7 +44,6 @@ class VideoController extends Controller
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->storeAs('videos', uniqid() . '_' . $file->getClientOriginalName(), 'public');
-
             $video = video::create([
                 'teacher_id' => $teacher->id,
                 'lesson_id' => $request->input('lesson_id'),

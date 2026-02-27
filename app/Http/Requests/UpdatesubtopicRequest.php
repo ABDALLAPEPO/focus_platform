@@ -9,10 +9,6 @@ class UpdatesubtopicRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return false;
-    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -22,7 +18,8 @@ class UpdatesubtopicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|required|string|max:255',
+            'lesson_id' => 'sometimes|required|exists:lessons,id',
         ];
     }
 }

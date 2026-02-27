@@ -9,10 +9,7 @@ class StoresubtopicRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
-    {
-        return false;
-    }
+  
 
     /**
      * Get the validation rules that apply to the request.
@@ -22,7 +19,8 @@ class StoresubtopicRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'required|string|max:255',
+            'lesson_id' => 'required|exists:lessons,id',
         ];
     }
 }

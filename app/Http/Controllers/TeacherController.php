@@ -10,6 +10,7 @@ use App\Http\Resources\quizResource;
 use App\Http\Resources\teacherCollection;
 use App\Http\Resources\teacherResource;
 use App\Http\Resources\videoCollection;
+use App\Http\Resources\videoResource;
 use App\Models\lesson;
 use App\Models\quiz;
 use App\Models\subject;
@@ -34,11 +35,12 @@ class TeacherController extends Controller
 
         // Non-paginated version
         $teachers = cache()->remember($cacheKey . '_all', 1440, function () use ($subject) {
-            return $subject->teachers;
+            return new teacherCollection($subject->teachers);
         });
 
         return ['teachers' => $teachers];
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -59,7 +61,15 @@ class TeacherController extends Controller
     }
     public function showContent(subject $subject, teacher $teacher, lesson $lesson)
     {
-        return ['teacher' => new teacherResource($teacher), 'videos' => new videoCollection($teacher->videos)];
+        if ($teacher->videos->contains('lesson_id', $lesson->id)) {
+            $videos = new videoResource($teacher->videos->where('lesson_id', $lesson->id)->first());
+        } else {
+            return response()->json([
+                'message' => 'Lesson does not belong to the teacher\'s subject.',
+            ], 404);
+        }
+
+        return ['teacher' => new teacherResource($teacher), 'videos' => $videos];
         // return (new teacherResource($teacher))->additional([ 'videos'=> new videoCollection($teacher->videos)]);
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }

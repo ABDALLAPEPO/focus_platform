@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Subject;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\teacher>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Teacher>
  */
 class TeacherFactory extends Factory
 {
@@ -20,7 +20,7 @@ class TeacherFactory extends Factory
     {
         return [
             'user_id' => User::factory()->teacher(), // Assign teacher role to the user
-            'subject_id' => $this->faker->randomElement(Subject::pluck('id')->toArray()),
+            'subject_id' => Subject::inRandomOrder()->value('id'),
         ];
     }
 }

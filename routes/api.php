@@ -38,10 +38,10 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('videos', VideoController::class)->middleware(['role:teacher']);
 });
 
-Route::middleware(['auth:api', 'role:teacher'])->group(function () {
-    Route::apiResource('subjects', SubjectController::class);
+// Route::middleware(['auth:api', 'role:teacher'])->group(function () {
+//     Route::apiResource('subjects', SubjectController::class);
 
-    Route::prefix('subjects/{subject}')->group(function () {
-        Route::apiResource('subtopics', SubtopicController::class);
-    });
-});
+//     Route::prefix('subjects/{subject}')->group(function () {
+//         Route::apiResource('subtopics', SubtopicController::class);
+//     });
+// });

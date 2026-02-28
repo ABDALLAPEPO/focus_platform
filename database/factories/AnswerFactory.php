@@ -8,7 +8,7 @@ use App\Models\Student;
 use App\Models\Question;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\answer>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Answer>
  */
 class AnswerFactory extends Factory
 {
@@ -19,10 +19,13 @@ class AnswerFactory extends Factory
      */
     public function definition(): array
     {
+        // Pick a random question first, then derive quiz_id from it
+        $question = Question::inRandomOrder()->first();
+
         return [
-            'quiz_id' => Quiz::factory(),
-            'student_id' => Student::factory(),
-            'question_id' => Question::factory(),
+            'quiz_id'     => $question->quiz_id,
+            'student_id'  => Student::inRandomOrder()->value('id'),
+            'question_id' => $question->id,
             'answer_text' => $this->faker->sentence(),
             'correctness' => $this->faker->boolean(),
         ];

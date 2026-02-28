@@ -7,7 +7,7 @@ use App\Models\Quiz;
 use App\Models\Student;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\quizAttempt>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\QuizAttempt>
  */
 class QuizAttemptFactory extends Factory
 {
@@ -19,10 +19,9 @@ class QuizAttemptFactory extends Factory
     public function definition(): array
     {
         return [
-            'quiz_id' => Quiz::factory(),
-            'student_id' => Student::factory(),
-            'score' => $this->faker->numberBetween(0, 100),
-            // 'completed_at' => $this->faker->dateTime(),
+            'student_id' => Student::inRandomOrder()->value('id'),
+            'quiz_id'    => Quiz::inRandomOrder()->value('id'),
+            'score'      => $this->faker->numberBetween(0, 100),
         ];
     }
 }

@@ -8,7 +8,7 @@ use App\Models\Teacher;
 use App\Models\Video;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\quiz>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Quiz>
  */
 class QuizFactory extends Factory
 {
@@ -19,10 +19,22 @@ class QuizFactory extends Factory
      */
     public function definition(): array
     {
+        $teacher = Teacher::inRandomOrder()->first();
+
+        // Pick a lesson from the teacher's subject
+        $lessonId = Lesson::whereHas('unit', function ($q) use ($teacher) {
+            $q->where('subject_id', $teacher->subject_id);
+        })->inRandomOrder()->value('id');
+
+        // Pick a video linked to a lesson in the teacher's subject
+        $videoId = Video::whereHas('lesson.unit', function ($q) use ($teacher) {
+            $q->where('subject_id', $teacher->subject_id);
+        })->inRandomOrder()->value('id');
+
         return [
-            'lesson_id' => $this->faker->randomElement(Lesson::pluck('id')->toArray()),
-            'teacher_id' => Teacher::factory(),
-            'video_id' => Video::factory(),
+            'lesson_id'  => $lessonId,
+            'teacher_id' => $teacher->id,
+            'video_id'   => $videoId,
         ];
     }
 }

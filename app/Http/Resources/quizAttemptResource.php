@@ -19,6 +19,8 @@ class quizAttemptResource extends JsonResource
             'student_id'=>$this->student->id,
             'quiz_id'=>$this->quiz->id,
             'lesson_title'=>$this->quiz->lesson->title,
+            'video_title'=>$this->quiz->video->title,
+            'teacher_name'=>$this->quiz->teacher->user->name,
             'score'=>$this->score,
             'created_at'=>$this->created_at->format('Y-m-d h:i:s')
         ];

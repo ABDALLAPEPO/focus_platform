@@ -26,13 +26,13 @@ class DatabaseSeeder extends Seeder
             UnitSeeder::class,
             LessonSeeder::class,
             SubtopicSeeder::class,
+            TeacherSeeder::class,
+            StudentSeeder::class,
+            VideoSeeder::class,
+            QuizSeeder::class,
             QuestionSeeder::class,
             AnswerSeeder::class,
-            QuizSeeder::class,
             QuizAttemptSeeder::class,
-            StudentSeeder::class,
-            TeacherSeeder::class,
-            VideoSeeder::class,
         ]);
 
         // Clear Faker's unique generator to prevent duplicate issues

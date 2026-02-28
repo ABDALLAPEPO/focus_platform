@@ -35,7 +35,7 @@ class AnswerController extends Controller
             return $student->quizzesAttempt;
         });
 
-        return ['quizzesAttempt' => $quizAttempts];
+        return ['quizzesAttempt' => new quizAttemptCollection($quizAttempts)];
     }
 
     /**

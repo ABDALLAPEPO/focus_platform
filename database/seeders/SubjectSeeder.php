@@ -13,18 +13,18 @@ class SubjectSeeder extends Seeder
      */
     public function run(): void
     {
-subject::firstOrCreate(
-    ['title' => 'الرياضيات', 'code' => 'MATH']
-);
+// subject::firstOrCreate(
+//     ['title' => 'الرياضيات', 'code' => 'MATH']
+// );
 subject::firstOrCreate(
     ['title' => 'الفيزياء', 'code' => 'PHYSICS']
 );
-subject::firstOrCreate(
-    ['title' => 'الأحياء', 'code' => 'BIOLOGY']
-);
-subject::firstOrCreate(
-    ['title' => 'الكيمياء', 'code' => 'CHEMISTRY']
-);
+// subject::firstOrCreate(
+//     ['title' => 'الأحياء', 'code' => 'BIOLOGY']
+// );
+// subject::firstOrCreate(
+//     ['title' => 'الكيمياء', 'code' => 'CHEMISTRY']
+// );
 
     // subject::(['name' => 'الرياضيات', 'code' => 'MATH']);
     // subject::create(['name' => 'الرياضيات', 'code' => 'MATH']);

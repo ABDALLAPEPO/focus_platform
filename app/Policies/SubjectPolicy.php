@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\subject;
+use App\Models\Subject;
 use Illuminate\Auth\Access\Response;
 
 class SubjectPolicy
@@ -64,3 +64,5 @@ class SubjectPolicy
         return false;
     }
 }
+
+

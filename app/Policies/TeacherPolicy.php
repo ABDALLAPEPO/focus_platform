@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\teacher;
+use App\Models\Teacher;
 use Illuminate\Auth\Access\Response;
 
 class TeacherPolicy
@@ -64,3 +64,5 @@ class TeacherPolicy
         return false;
     }
 }
+
+

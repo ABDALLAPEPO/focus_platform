@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\video;
-use App\Http\Requests\StorevideoRequest;
-use App\Http\Requests\UpdatevideoRequest;
-use App\Http\Resources\teacherResource;
-use App\Http\Resources\videoCollection;
+use App\Models\Video;
+use App\Http\Requests\StoreVideoRequest;
+use App\Http\Requests\UpdateVideoRequest;
+use App\Http\Resources\TeacherResource;
+use App\Http\Resources\VideoCollection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -27,11 +27,11 @@ class VideoController extends Controller
         // });
 
         // Non-paginated version
-        $videos = cache()->remember($cacheKey . '_all', 1440, function () use ($teacher) {
+        $videos = cache()->remember($cacheKey . '_all', 60, function () use ($teacher) {
             return $teacher->videos;
         });
 
-        return ['teacher' => $teacher, 'videos' => $videos];
+        return ['teacher' => new teacherResource($teacher), 'videos' => new VideoCollection($videos)];
     }
 
     /**
@@ -39,12 +39,12 @@ class VideoController extends Controller
      */
     public function store(StorevideoRequest $request)
     {
-        Gate::authorize('create', video::class);
+        Gate::authorize('create', Video::class);
         $teacher = JWTAuth::user()->teacher;
         if ($request->hasFile('file')) {
             $file = $request->file('file');
             $path = $file->storeAs('videos', uniqid() . '_' . $file->getClientOriginalName(), 'public');
-            $video = video::create([
+            $video = Video::create([
                 'teacher_id' => $teacher->id,
                 'lesson_id' => $request->input('lesson_id'),
                 'title' => $request->input('title'),
@@ -58,7 +58,7 @@ class VideoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(video $video)
+    public function show(Video $video)
     {
         return response()->json($video);
     }
@@ -66,7 +66,7 @@ class VideoController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatevideoRequest $request, video $video)
+    public function update(UpdateVideoRequest $request, Video $video)
     {
         $video->update($request->validated());
         return response()->json($video);
@@ -75,9 +75,9 @@ class VideoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(video $video)
+    public function destroy(Video $video)
     {
-        Gate::authorize('delete', [video::class, $video]);
+        Gate::authorize('delete', [Video::class, $video]);
         Storage::disk('public')->delete($video->url);
         $video->delete();
         return response()->json(['message' => 'Video deleted successfully']);

@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\lesson;
+use App\Models\Lesson;
 use Illuminate\Auth\Access\Response;
 
 class LessonPolicy
@@ -64,3 +64,5 @@ class LessonPolicy
         return false;
     }
 }
+
+

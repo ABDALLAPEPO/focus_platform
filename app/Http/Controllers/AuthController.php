@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\studentResource;
-use App\Http\Resources\teacherResource;
-use App\Models\subject;
+use App\Http\Resources\StudentResource;
+use App\Http\Resources\TeacherResource;
+use App\Models\Subject;
 use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -26,19 +26,14 @@ class AuthController extends Controller
             $user->teacher()->create([
                 'subject_id' => $data['subject_id'],
             ]);
-
-            
         }
         if (isset($data['student']) && $data['student']) {
             $user->assignRole('student');
             $user->student()->create();
-
-           
         }
         $token = JWTAuth::fromUser($user);
         return $user->hasRole('teacher') ?
-            (new teacherResource($user->teacher))->additional(['token' => $token])->response()->setStatusCode(201) :
-            (new studentResource($user->student))->additional(['token' => $token])->response()->setStatusCode(201);
+            (new TeacherResource($user->teacher))->additional(['token' => $token])->response()->setStatusCode(201) : (new StudentResource($user->student))->additional(['token' => $token])->response()->setStatusCode(201);
         // dd(subject::all())  ;
 
     }
@@ -53,8 +48,8 @@ class AuthController extends Controller
 
         return response()->json([
             'user' => JWTAuth::user()->hasRole('teacher') ?
-                new teacherResource(JWTAuth::user()->teacher) :
-                new studentResource(JWTAuth::user()->student),
+                new TeacherResource(JWTAuth::user()->teacher) :
+                new StudentResource(JWTAuth::user()->student),
             'token' => $token,
         ], 201);
     }

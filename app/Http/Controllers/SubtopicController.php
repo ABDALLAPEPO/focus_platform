@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
-use App\Models\subtopic;
-use App\Http\Requests\StoresubtopicRequest;
-use App\Http\Requests\UpdatesubtopicRequest;
+use App\Models\Subtopic;
+use App\Http\Requests\StoreSubtopicRequest;
+use App\Http\Requests\UpdateSubtopicRequest;
 
 class SubtopicController extends Controller
 {
@@ -20,7 +20,7 @@ class SubtopicController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoresubtopicRequest $request, Subject $subject)
+    public function store(StoreSubtopicRequest $request, Subject $subject)
     {
         $subtopic = $subject->subtopics()->create($request->validated());
 
@@ -38,7 +38,7 @@ class SubtopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatesubtopicRequest $request, Subject $subject, Subtopic $subtopic)
+    public function update(UpdateSubtopicRequest $request, Subject $subject, Subtopic $subtopic)
     {
         $subtopic->update($request->validated());
 

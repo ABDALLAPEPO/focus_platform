@@ -3,8 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\quiz;
-use App\Models\video;
+use App\Models\Quiz;
+use App\Models\Video;
 use Illuminate\Auth\Access\Response;
 
 class QuizPolicy
@@ -68,3 +68,5 @@ class QuizPolicy
         return false;
     }
 }
+
+

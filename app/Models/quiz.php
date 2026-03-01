@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
-class quiz extends Model
+class Quiz extends Model
 {
     /** @use HasFactory<\Database\Factories\QuizFactory> */
     use HasFactory;
@@ -17,22 +17,39 @@ class quiz extends Model
         'video_id',
     ];
 
-    public function lesson(){
-        return $this->belongsTo(lesson::class);
+    protected static function booted()
+    {
+        static::saved(function ($quiz) {
+            if ($quiz->wasChanged('teacher_id')) {
+                cache()->forget('quizzes_teacher_' . $quiz->getOriginal('teacher_id') . '_all');
+            }
+            cache()->forget('quizzes_teacher_' . $quiz->teacher_id . '_all');
+        });
+        static::deleted(fn($quiz) => cache()->forget('quizzes_teacher_' . $quiz->teacher_id . '_all'));
     }
-    public function teacher(){
-        return $this->belongsTo(teacher::class);
+
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
     }
-    public function video(){
-        return $this->belongsTo(video::class);
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
     }
-    public function questions(){
-        return $this->hasMany(question::class);
+    public function video()
+    {
+        return $this->belongsTo(Video::class);
     }
-    public function answers(){
-        return $this->hasMany(answer::class);
+    public function questions()
+    {
+        return $this->hasMany(Question::class);
     }
-    public function quizzesAttempt(){
-        return $this->hasMany(quizAttempt::class);
+    public function answers()
+    {
+        return $this->hasMany(Answer::class);
+    }
+    public function quizzesAttempt()
+    {
+        return $this->hasMany(QuizAttempt::class);
     }
 }

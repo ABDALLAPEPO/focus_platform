@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\quizAttempt;
+use App\Models\QuizAttempt;
 use Illuminate\Auth\Access\Response;
 
 class QuizAttemptPolicy
@@ -64,3 +64,5 @@ class QuizAttemptPolicy
         return false;
     }
 }
+
+

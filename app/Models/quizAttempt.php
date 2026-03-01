@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class quizAttempt extends Model
+class QuizAttempt extends Model
 {
     /** @use HasFactory<\Database\Factories\QuizAttemptFactory> */
     use HasFactory;
@@ -15,10 +15,23 @@ class quizAttempt extends Model
         'score'
     ];
 
-    public function student(){
-        return $this->belongsTo(student::class);
+    protected static function booted()
+    {
+        static::saved(function ($attempt) {
+            if ($attempt->wasChanged('student_id')) {
+                cache()->forget('quiz_attempts_student_' . $attempt->getOriginal('student_id') . '_all');
+            }
+            cache()->forget('quiz_attempts_student_' . $attempt->student_id . '_all');
+        });
+        static::deleted(fn($attempt) => cache()->forget('quiz_attempts_student_' . $attempt->student_id . '_all'));
     }
-    public function quiz(){
-        return $this->belongsTo(quiz::class);
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
+    }
+    public function quiz()
+    {
+        return $this->belongsTo(Quiz::class);
     }
 }

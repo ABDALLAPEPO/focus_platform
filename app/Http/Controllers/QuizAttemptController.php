@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\quizAttempt;
+use App\Models\QuizAttempt;
 use App\Http\Requests\StorequizAttemptRequest;
 use App\Http\Requests\UpdatequizAttemptRequest;
 
@@ -48,3 +48,5 @@ class QuizAttemptController extends Controller
         //
     }
 }
+
+

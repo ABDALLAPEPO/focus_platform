@@ -7,7 +7,12 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\SubtopicController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\VideoController;
-use App\Models\subject;
+use App\Models\Subject;
+use App\Models\Teacher;
+use App\Models\Lesson;
+use App\Models\Video;
+use App\Models\Quiz;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,18 +25,22 @@ Route::middleware('auth:api')->group(function () {
     Route::get('me', [AuthController::class, 'me']);
 
     // Subject routes
+    // Route::get('subjects/{subject}/teachers/{teacher}/videos/{video}', [TeacherController::class, 'test'])->scopeBindings();
+
     Route::get('subjects', [SubjectController::class, 'index']);
     Route::get('subjects/{subject}/teachers', [TeacherController::class, 'index']);
     Route::get('subjects/{subject}/teachers/{teacher}/lessons', [TeacherController::class, 'show']);
-    Route::get('subjects/{subject}/teachers/{teacher}/lessons/{lesson}/content', [TeacherController::class, 'showContent']);
-    Route::get('subjects/{subject}/teachers/{teacher}/lessons/{lesson}/videos/{video}/quizzes/{quiz}', [TeacherController::class, 'showQuiz']);
+    Route::get('subjects/{subject}/teachers/{teacher}/lessons/{lesson}/content', [TeacherController::class, 'showContent'])->scopeBindings();
+    Route::get('subjects/{subject}/teachers/{teacher}/lessons/{lesson}/videos/{video}/quizzes/{quiz}', [TeacherController::class, 'showQuiz'])->scopeBindings();
+    
+
     Route::post('subjects/{subject}/teachers/{teacher}/lessons/{lesson}/videos/{video}/quizzes/{quiz}/answers', [AnswerController::class, 'store']);
-    Route::get('students/{student}/attempts', [AnswerController::class, 'index'])->middleware(['role:student']);
+    Route::get('students/attempts', [AnswerController::class, 'index'])->middleware(['role:student']);
     Route::get('subjects/{subject}/subtopics', [SubjectController::class, 'showSubtopics']);
 
     // Quiz routes
     Route::apiResource('quizzes', QuizController::class)->middleware(['role:teacher']);
-    Route::get('quizzes', [QuizController::class, 'getAllQuizzes']);
+    // Route::get('quizzes', [QuizController::class, 'getAllQuizzes']);
     Route::get('quizzes/{quiz}/questions/{question}', [QuizController::class, 'getQuestion']);
 
     // Video routes

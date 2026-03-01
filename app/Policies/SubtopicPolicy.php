@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\subtopic;
+use App\Models\Subtopic;
 use Illuminate\Auth\Access\Response;
 
 class SubtopicPolicy
@@ -64,3 +64,5 @@ class SubtopicPolicy
         return false;
     }
 }
+
+

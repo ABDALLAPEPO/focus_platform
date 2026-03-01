@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\unit;
-use App\Http\Requests\StoreunitRequest;
-use App\Http\Requests\UpdateunitRequest;
+use App\Models\Unit;
+use App\Http\Requests\StoreUnitRequest;
+use App\Http\Requests\UpdateUnitRequest;
 
 class UnitController extends Controller
 {
@@ -19,7 +19,7 @@ class UnitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreunitRequest $request)
+    public function store(StoreUnitRequest $request)
     {
         //
     }
@@ -27,7 +27,7 @@ class UnitController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(unit $unit)
+    public function show(Unit $unit)
     {
         //
     }
@@ -35,7 +35,7 @@ class UnitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateunitRequest $request, unit $unit)
+    public function update(UpdateUnitRequest $request, Unit $unit)
     {
         //
     }
@@ -43,7 +43,7 @@ class UnitController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(unit $unit)
+    public function destroy(Unit $unit)
     {
         //
     }

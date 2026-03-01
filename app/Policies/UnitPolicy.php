@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\unit;
+use App\Models\Unit;
 use Illuminate\Auth\Access\Response;
 
 class UnitPolicy
@@ -64,3 +64,5 @@ class UnitPolicy
         return false;
     }
 }
+
+

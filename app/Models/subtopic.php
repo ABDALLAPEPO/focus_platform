@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class subtopic extends Model
+class Subtopic extends Model
 {
     /** @use HasFactory<\Database\Factories\SubtopicFactory> */
     use HasFactory;
@@ -17,11 +17,11 @@ class subtopic extends Model
     ];
     public function lesson()
     {
-        return $this->belongsTo(lesson::class);
+        return $this->belongsTo(Lesson::class);
     }
     public function questions()
     {
-        return $this->hasMany(question::class);
+        return $this->hasMany(Question::class);
     }
-
 }
+

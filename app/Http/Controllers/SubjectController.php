@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\subject;
-use App\Http\Requests\StoresubjectRequest;
-use App\Http\Requests\UpdatesubjectRequest;
-use App\Http\Resources\teacherCollection;
+use App\Models\Subject;
+use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Requests\UpdateSubjectRequest;
+use App\Http\Resources\TeacherCollection;
 use Illuminate\Http\Request;
 
 class SubjectController extends Controller
@@ -23,17 +23,17 @@ class SubjectController extends Controller
         // });
 
         // Non-paginated version
-        $subjects = cache()->remember($cacheKey . '_all', 1440, function () {
+        $subjects = cache()->remember($cacheKey . '_all', 60, function () {
             return subject::all();
         });
 
-        return $subjects;
+        return response()->json($subjects);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoresubjectRequest $request)
+    public function store(StoreSubjectRequest $request)
     {
         $subject = Subject::create($request->validated());
 
@@ -43,11 +43,11 @@ class SubjectController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(subject $subject)
+    public function show(Subject $subject)
     {
-        return new teacherCollection($subject->teachers);
+        return new TeacherCollection($subject->teachers);
     }
-    public function showSubtopics(subject $subject)
+    public function showSubtopics(Subject $subject)
     {
         return $subject->load([
             'units:id,title,subject_id',
@@ -59,7 +59,7 @@ class SubjectController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatesubjectRequest $request, subject $subject)
+    public function update(UpdateSubjectRequest $request, Subject $subject)
     {
         $subject->update($request->validated());
 
@@ -69,7 +69,7 @@ class SubjectController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(subject $subject)
+    public function destroy(Subject $subject)
     {
         $subject->delete();
 

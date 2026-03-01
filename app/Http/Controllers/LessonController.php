@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\lesson;
+use App\Models\Lesson;
 use App\Http\Requests\StorelessonRequest;
 use App\Http\Requests\UpdatelessonRequest;
 
@@ -48,3 +48,5 @@ class LessonController extends Controller
         //
     }
 }
+
+

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\quiz;
-use App\Http\Requests\StorequizRequest;
-use App\Http\Requests\UpdatequizRequest;
-use App\Http\Resources\quizCollection;
-use App\Http\Resources\quizResource;
-use App\Models\question;
-use App\Models\video;
+use App\Models\Quiz;
+use App\Http\Requests\StoreQuizRequest;
+use App\Http\Requests\UpdateQuizRequest;
+use App\Http\Resources\QuizCollection;
+use App\Http\Resources\QuizResource;
+use App\Models\Question;
+use App\Models\Video;
 
 use Illuminate\Support\Facades\Gate;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -21,6 +21,7 @@ class QuizController extends Controller
     public function index()
     {
         $teacher = JWTAuth::user()->teacher;
+        // return $teacher;
         $cacheKey = 'quizzes_teacher_' . $teacher->id;
 
         // Paginated version
@@ -29,7 +30,7 @@ class QuizController extends Controller
         // });
 
         // Non-paginated version
-        $quizzes = cache()->remember($cacheKey . '_all', 1440, function () use ($teacher) {
+        $quizzes = cache()->remember($cacheKey . '_all', 60, function () use ($teacher) {
             return $teacher->quizzes;
         });
 
@@ -43,15 +44,16 @@ class QuizController extends Controller
     {
 
         $questions = $request->validated();
-        $video = video::find($questions['video_id']);
-        Gate::authorize('create', [quiz::class, $video]);
-        $quiz = quiz::create([
+        $video = Video::findOrFail($questions['video_id']);
+        Gate::authorize('create', [Quiz::class, $video]);
+        $quiz = Quiz::create([
             'lesson_id' => $video->lesson_id,
             'teacher_id' => JWTAuth::user()->teacher->id,
             'video_id' => $questions['video_id'],
         ]);
-        foreach ($questions['questions'] as $q) {
-            question::create([
+
+        $questionsData = array_map(function ($q) use ($quiz) {
+            return [
                 'quiz_id' => $quiz->id,
                 'question' => $q['question'],
                 'subtopic_id' => $q['subtopic_id'],
@@ -60,15 +62,20 @@ class QuizController extends Controller
                 'option_3' => $q['option'][2],
                 'option_4' => $q['option'][3],
                 'correct_answer' => $q['correct_answer'],
-            ]);
-        }
-        return ['quiz' => new quizResource($quiz)];
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }, $questions['questions']);
+
+        Question::insert($questionsData);
+
+        return ['quiz' => new QuizResource($quiz)];
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(quiz $quiz)
+    public function show(Quiz $quiz)
     {
         //
     }
@@ -76,7 +83,7 @@ class QuizController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatequizRequest $request, quiz $quiz)
+    public function update(UpdateQuizRequest $request, Quiz $quiz)
     {
         //
     }
@@ -84,7 +91,7 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(video $video, quiz $quiz)
+    public function destroy(Video $video, Quiz $quiz)
     {
         $quiz->delete();
         return response()->json([
@@ -97,19 +104,19 @@ class QuizController extends Controller
      */
     public function getAllQuizzes()
     {
-        $quizzes = quiz::all();
-        return response()->json(['quizzes' => quizResource::collection($quizzes), 'count' => $quizzes->count()]);
+        $quizzes = Quiz::all();
+        return response()->json(['quizzes' => QuizResource::collection($quizzes), 'count' => $quizzes->count()]);
     }
 
     /**
      * Get a specific question for a quiz.
      */
-    public function getQuestion(quiz $quiz, question $question)
+    public function getQuestion(Quiz $quiz, Question $question)
     {
         if ($question->quiz_id !== $quiz->id) {
             return response()->json(['error' => 'Question does not belong to the specified quiz'], 404);
         }
 
-        return response()->json(['question' => new quizResource($question)]);
+        return response()->json(['question' => new QuizResource($question)]);
     }
 }

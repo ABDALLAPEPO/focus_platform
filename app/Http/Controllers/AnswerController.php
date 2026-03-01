@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreanswerRequest;
-use App\Http\Requests\UpdateanswerRequest;
-use App\Http\Resources\answerCollection;
-use App\Http\Resources\quizAttemptCollection;
-use App\Models\answer;
-use App\Models\lesson;
-use App\Models\quiz;
-use App\Models\quizAttempt;
-use App\Models\student;
-use App\Models\subject;
-use App\Models\teacher;
-use App\Models\video;
+use App\Http\Requests\StoreAnswerRequest;
+use App\Http\Requests\UpdateAnswerRequest;
+use App\Http\Resources\AnswerCollection;
+use App\Http\Resources\QuizAttemptCollection;
+use App\Models\Answer;
+use App\Models\Lesson;
+use App\Models\Quiz;
+use App\Models\QuizAttempt;
+use App\Models\Student;
+use App\Models\Subject;
+use App\Models\Teacher;
+use App\Models\Video;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AnswerController extends Controller
@@ -21,8 +21,9 @@ class AnswerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(student $student)
+    public function index()
     {
+        $student = JWTAuth::user()->student;
         $cacheKey = 'quiz_attempts_student_' . $student->id;
 
         // Paginated version
@@ -31,21 +32,21 @@ class AnswerController extends Controller
         // });
 
         // Non-paginated version
-        $quizAttempts = cache()->remember($cacheKey . '_all', 1440, function () use ($student) {
+        $quizAttempts = cache()->remember($cacheKey . '_all', 60, function () use ($student) {
             return $student->quizzesAttempt;
         });
 
-        return ['quizzesAttempt' => new quizAttemptCollection($quizAttempts)];
+        return ['quizzesAttempt' => new QuizAttemptCollection($quizAttempts)];
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreanswerRequest $request, subject $subject, teacher $teacher, lesson $lesson, video $video, quiz $quiz)
+    public function store(StoreAnswerRequest $request, Subject $subject, Teacher $teacher, Lesson $lesson, Video $video, Quiz $quiz)
     {
         $answers = $request->validated();
         $student = JWTAuth::user()->student;
-        if ($student->quizzesAttempt->where('quiz_id', $quiz->id)->first()) {
+        if ($student->quizzesAttempt()->where('quiz_id', $quiz->id)->exists()) {
             return response()->json([
                 'message' => 'you attempt this quiz ',
             ]);
@@ -59,7 +60,7 @@ class AnswerController extends Controller
                 $answer_question_id = $answers['answers'][$i]['question_id'];
 
                 $quiz_question = $quiz->questions->where('id', $answer_question_id)->first();
-
+                // dd($quiz_question);
                 if ($quiz_question->correct_answer == $answers['answers'][$i]['answer_text']) {
                     $score += 1;
                 }
@@ -72,20 +73,20 @@ class AnswerController extends Controller
                 ]);
             }
         }
-        $quizAttempt = quizAttempt::create([
+        $quizAttempt = QuizAttempt::create([
             'quiz_id' => $quiz->id,
             'student_id' => $student->id,
             'score' => $score,
         ]);
-        $s_q_answers = answer::where('quiz_id', $quiz->id)->where('student_id', $student->id)->get();
+        $s_q_answers = Answer::where('quiz_id', $quiz->id)->where('student_id', $student->id)->get();
 
-        return ['answers' => new answerCollection($s_q_answers), 'score' => $score];
+        return ['answers' => new AnswerCollection($s_q_answers), 'score' => $score];
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(answer $answer)
+    public function show(Answer $answer)
     {
         //
     }
@@ -93,7 +94,7 @@ class AnswerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateanswerRequest $request, answer $answer)
+    public function update(UpdateAnswerRequest $request, Answer $answer)
     {
         //
     }
@@ -101,7 +102,7 @@ class AnswerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(answer $answer)
+    public function destroy(Answer $answer)
     {
         //
     }

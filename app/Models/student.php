@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class student extends Model
+class Student extends Model
 {
     /** @use HasFactory<\Database\Factories\StudentFactory> */
     use HasFactory;
@@ -18,11 +18,11 @@ class student extends Model
     }
     public function answers()
     {
-        return $this->hasMany(answer::class);
+        return $this->hasMany(Answer::class);
     }
     public function quizzesAttempt()
     {
-        return $this->hasMany(quizAttempt::class);
+        return $this->hasMany(QuizAttempt::class);
     }
-
 }
+

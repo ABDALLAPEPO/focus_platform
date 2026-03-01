@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\question;
+use App\Models\Question;
 use App\Http\Requests\StorequestionRequest;
 use App\Http\Requests\UpdatequestionRequest;
 
@@ -48,3 +48,5 @@ class QuestionController extends Controller
         //
     }
 }
+
+

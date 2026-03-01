@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\video;
+use App\Models\Video;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Storage;
 
@@ -78,3 +78,5 @@ class VideoPolicy
         return false;
     }
 }
+
+

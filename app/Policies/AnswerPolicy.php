@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\answer;
+use App\Models\Answer;
 use Illuminate\Auth\Access\Response;
 
 class AnswerPolicy
@@ -64,3 +64,5 @@ class AnswerPolicy
         return false;
     }
 }
+
+

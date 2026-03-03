@@ -23,7 +23,8 @@ class TeacherController extends Controller
 {
 
 
-    public function test(Subject $subject, Teacher $teacher, Video $video){
+    public function test(Subject $subject, Teacher $teacher, Video $video)
+    {
         return '54';
     }
     /**
@@ -61,14 +62,16 @@ class TeacherController extends Controller
     public function show(Subject $subject, Teacher $teacher)
     {
         // return (new teacherResource($teacher))->additional([ 'videos'=> new videoCollection($teacher->videos)]);
-        return ['teacher' => new TeacherResource($teacher), 'lessons' => $teacher->videos()->with('lesson:id,title')->get()->pluck('lesson')];
+        // return ['teacher' => new TeacherResource($teacher), 'lessons' => $teacher->videos()->with('lesson:id,title')->get()->pluck('lesson')];
+        return ['teacher' => new teacherResource($teacher), 'lessons' => $teacher->lessons()->select('lessons.id', 'lessons.title')->distinct()->get()->makeHidden('laravel_through_key')];
+        // return ['teacher' => new teacherResource($teacher), 'lessons' => $teacher->lessons->makeHidden('laravel_through_key')];
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }
     public function showContent(Subject $subject, Teacher $teacher, Lesson $lesson)
     {
         // return $teacher->videos()->where('lesson_id', $lesson->id)->get();
         $videos = $teacher->videos()->where('lesson_id', $lesson->id)->get();
-        
+
 
         return ['teacher' => new TeacherResource($teacher), 'videos' => new VideoCollection($videos)];
         // return (new teacherResource($teacher))->additional([ 'videos'=> new videoCollection($teacher->videos)]);
@@ -78,15 +81,15 @@ class TeacherController extends Controller
     {
         // dd($teacher->videos->quiz);
         $student = JWTAuth::user()->student;
-        
+
         // dd($student->quizzesAttempt->where('quiz_id', $quiz->id)->first());
         if ($student->quizzesAttempt->where('quiz_id', $quiz->id)->first()) {
             return response()->json([
                 'message' => 'you attempt this quiz ',
             ]);
         };
-        
-        return ['teacher' => new TeacherResource( $teacher), 'quiz' => new QuizResource($quiz)];
+
+        return ['teacher' => new TeacherResource($teacher), 'quiz' => new QuizResource($quiz)];
         // return (new teacherResource($teacher))->additional([ 'quiz'=> new quizResource($quiz)]);
         // return (new teacherResource($teacher))->additional([ 'lessons'=> $teacher->videos->load('lesson:id,title')->pluck('lesson')]);
     }
